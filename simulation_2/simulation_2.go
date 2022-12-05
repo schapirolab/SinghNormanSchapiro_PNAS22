@@ -639,76 +639,6 @@ func (ss *Sim) AlphaCyc(train bool) {
 		}
 	}
 
-	if !train && ss.TstWrtOut {
-		dirpathacts := "output/" + "lrnacts" + "/" + "tstacts" + fmt.Sprint(ss.DirSeed) + "_truns_" + fmt.Sprint(ss.MaxRuns) + "/"
-
-		if _, err := os.Stat(filepath.FromSlash(dirpathacts)); os.IsNotExist(err) {
-			os.MkdirAll(filepath.FromSlash(dirpathacts), os.ModePerm)
-		}
-
-		filelrnacts, _ := os.OpenFile(filepath.FromSlash(dirpathacts+fmt.Sprint(ss.RndSeed)+"_"+"run"+fmt.Sprint(ss.TrainEnv.Run.Cur)+".csv"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		defer filelrnacts.Close()
-		writerlrnacts := csv.NewWriter(filelrnacts)
-		defer writerlrnacts.Flush()
-
-		if (ss.TrainEnv.Epoch.Cur == 1) && (ss.TestEnv.TrialName.Cur == "evt_0_ab") {
-
-			// copying params.go to better track params associated with the run data
-			paramsdata, err := ioutil.ReadFile("params.go")
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-
-			err = ioutil.WriteFile(filepath.FromSlash(dirpathacts+"/"+fmt.Sprint(ss.DirSeed)+"params.go"), paramsdata, 0644)
-			if err != nil {
-				fmt.Println("Error creating", dirpathacts+"/"+fmt.Sprint(ss.DirSeed)+"_"+"params.go")
-				fmt.Println(err)
-				return
-			}
-
-			mainfile, err := ioutil.ReadFile("simulation_2.go")
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-
-			err = ioutil.WriteFile(dirpathacts+"/"+fmt.Sprint(ss.DirSeed)+"simulation_2.go", mainfile, 0644)
-			if err != nil {
-				fmt.Println("Error creating", dirpathacts+"/"+fmt.Sprint(ss.DirSeed)+"_"+"params.go")
-				fmt.Println(err)
-				return
-			}
-
-		}
-
-		if (ss.TrainEnv.Epoch.Cur == 1) && (ss.TestEnv.TrialName.Cur == "evt_0_ab") {
-			headers := []string{"Run", "Epoch", "Cycle", "TrialName", "SleepCounter"}
-
-			for i := 0; i < 400; i++ {
-				str := "CTX_" + fmt.Sprint(i)
-				headers = append(headers, str)
-			}
-			if ss.TrainEnv.Epoch.Cur == 1 {
-				writerlrnacts.Write(headers)
-			}
-
-		}
-		valueStr := []string{}
-
-		for i := 0; i < 100; i++ {
-			if i == 19 || i == 99 {
-				valueStr := []string{fmt.Sprint(ss.TrainEnv.Run.Cur), fmt.Sprint(ss.TrainEnv.Epoch.Cur), fmt.Sprint(i), fmt.Sprint(ss.TestEnv.TrialName.Cur), fmt.Sprint(ss.SleepCounter)}
-				for _, vals := range ctxCycActs[i] {
-					valueStr = append(valueStr, fmt.Sprint(vals))
-				}
-				writerlrnacts.Write(valueStr)
-			}
-		}
-		writerlrnacts.Write(valueStr)
-
-	}
-
 	if train {
 		ss.Net.DWt()
 	}
@@ -1438,7 +1368,8 @@ func (ss *Sim) SleepCyc(c [][]float64, stage string, cycles int) {
 	}
 
 	if ss.SlpPatMatchWrtOut {
-		filew, _ := os.OpenFile(filepath.FromSlash(dirpathacts+"/"+"repmatch"+fmt.Sprint(ss.RndSeed)+"_"+
+		filew, _ := os.OpenFile(filepath.FromSlash("output/"+"sleep"+"/"+"ReplayMatch"+"/"+fmt.Sprint(ss.DirSeed)+"/"+"repmatch"+
+			fmt.Sprint(ss.RndSeed)+"_truns_"+fmt.Sprint(ss.MaxRuns)+"_run_"+fmt.Sprint(ss.TrainEnv.Run.Cur)+"/"+"repmatch"+fmt.Sprint(ss.RndSeed)+"_"+
 			"run"+fmt.Sprint(ss.TrainEnv.Run.Cur)+"epoch"+fmt.Sprint(ss.TrainEnv.Epoch.Cur)+
 			"_"+"stage-"+fmt.Sprint(ss.SleepStage)+"slpblk_"+fmt.Sprint(ss.SleepCounter)+".csv"),
 			os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -1850,6 +1781,44 @@ func (ss *Sim) TestAll() {
 		if chg || ss.StopNow {
 			break
 		}
+	}
+
+	if ss.TstWrtOut {
+		dirpathacts := ("output/" + "wake" + "/" + fmt.Sprint(ss.DirSeed) + "/" + "tstsse" + fmt.Sprint(ss.RndSeed) + "_truns_" + fmt.Sprint(ss.MaxRuns) + "_run_" + fmt.Sprint(ss.TrainEnv.Run.Cur) + "/")
+
+		if _, err := os.Stat(filepath.FromSlash(dirpathacts)); os.IsNotExist(err) {
+			os.MkdirAll(filepath.FromSlash(dirpathacts), os.ModePerm)
+		}
+
+		// copying params.go to better track params associated with the run data
+		paramsdata, err := ioutil.ReadFile("params.go")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		err = ioutil.WriteFile(filepath.FromSlash("output/"+"wake"+"/"+fmt.Sprint(ss.DirSeed)+"/"+"tstacts"+fmt.Sprint(ss.DirSeed)+"_"+"runs_"+fmt.Sprint(ss.MaxRuns)+"params.go"), paramsdata, 0644)
+		if err != nil {
+			fmt.Println("Error creating", dirpathacts+"/"+fmt.Sprint(ss.DirSeed)+"_"+"params.go")
+			fmt.Println(err)
+			return
+		}
+
+		mainfile, err := ioutil.ReadFile("sleep-replay-abac-chorse.go")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		err = ioutil.WriteFile(("output/" + "wake" + "/" + fmt.Sprint(ss.DirSeed) + "/" + "tstacts" + fmt.Sprint(ss.DirSeed) + "_" + "runs_" + fmt.Sprint(ss.MaxRuns) + "sleep-replay-abac-chorse.go"), mainfile, 0644)
+		if err != nil {
+			fmt.Println("Error creating", dirpathacts+"/"+fmt.Sprint(ss.DirSeed)+"_"+"params.go")
+			fmt.Println(err)
+			return
+		}
+
+		ss.TstTrlLog.SaveCSV(gi.FileName(filepath.FromSlash(dirpathacts+fmt.Sprint(ss.RndSeed)+"_"+"run"+fmt.Sprint(ss.TrainEnv.Run.Cur)+"epoch"+fmt.Sprint(ss.TrainEnv.Epoch.Cur)+
+			"_"+"poststage-"+fmt.Sprint(ss.SleepStage)+"slpblk_"+fmt.Sprint(ss.SleepCounter)+".csv")), etable.Comma, true)
 	}
 
 	// log only at very end
