@@ -1804,13 +1804,13 @@ func (ss *Sim) TestAll() {
 			return
 		}
 
-		mainfile, err := ioutil.ReadFile("sleep-replay-abac-chorse.go")
+		mainfile, err := ioutil.ReadFile("simulation_2.go")
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 
-		err = ioutil.WriteFile(("output/" + "wake" + "/" + fmt.Sprint(ss.DirSeed) + "/" + "tstacts" + fmt.Sprint(ss.DirSeed) + "_" + "runs_" + fmt.Sprint(ss.MaxRuns) + "sleep-replay-abac-chorse.go"), mainfile, 0644)
+		err = ioutil.WriteFile(("output/" + "wake" + "/" + fmt.Sprint(ss.DirSeed) + "/" + "tstacts" + fmt.Sprint(ss.DirSeed) + "_" + "runs_" + fmt.Sprint(ss.MaxRuns) + "simulation_2.go"), mainfile, 0644)
 		if err != nil {
 			fmt.Println("Error creating", dirpathacts+"/"+fmt.Sprint(ss.DirSeed)+"_"+"params.go")
 			fmt.Println(err)
