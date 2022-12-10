@@ -243,8 +243,8 @@ func (ss *Sim) New() {
 	ss.LogSetParams = false
 	ss.LayStatNms = []string{"Input", "Output"}
 	ss.TrialPerEpc = 10
-	ss.TstWrtOut = false         // true to output tst trl acts
-	ss.SlpPatMatchWrtOut = false // true to output sleep pattern deecoding
+	ss.TstWrtOut = true         // true to output tst trl acts
+	ss.SlpPatMatchWrtOut = true // true to output sleep pattern deecoding
 
 	ss.SlpCycLog = &etable.Table{}
 	ss.Sleep = false
@@ -1784,7 +1784,7 @@ func (ss *Sim) TestAll() {
 	}
 
 	if ss.TstWrtOut {
-		dirpathacts := ("output/" + "wake" + "/" + fmt.Sprint(ss.DirSeed) + "/" + "tstsse" + fmt.Sprint(ss.RndSeed) + "_truns_" + fmt.Sprint(ss.MaxRuns) + "_run_" + fmt.Sprint(ss.TrainEnv.Run.Cur) + "/")
+		dirpathacts := filepath.FromSlash("output/" + "wake" + "/" + fmt.Sprint(ss.DirSeed) + "/" + "tstsse" + fmt.Sprint(ss.RndSeed) + "_truns_" + fmt.Sprint(ss.MaxRuns) + "_run_" + fmt.Sprint(ss.TrainEnv.Run.Cur) + "/")
 
 		if _, err := os.Stat(filepath.FromSlash(dirpathacts)); os.IsNotExist(err) {
 			os.MkdirAll(filepath.FromSlash(dirpathacts), os.ModePerm)
@@ -1810,14 +1810,16 @@ func (ss *Sim) TestAll() {
 			return
 		}
 
-		err = ioutil.WriteFile(("output/" + "wake" + "/" + fmt.Sprint(ss.DirSeed) + "/" + "tstacts" + fmt.Sprint(ss.DirSeed) + "_" + "runs_" + fmt.Sprint(ss.MaxRuns) + "simulation_2.go"), mainfile, 0644)
+		err = ioutil.WriteFile(filepath.FromSlash("output/"+"wake"+"/"+fmt.Sprint(ss.DirSeed)+"/"+"tstacts"+fmt.Sprint(ss.DirSeed)+"_"+"runs_"+fmt.Sprint(ss.MaxRuns)+"simulation_2.go"), mainfile, 0644)
 		if err != nil {
 			fmt.Println("Error creating", dirpathacts+"/"+fmt.Sprint(ss.DirSeed)+"_"+"params.go")
 			fmt.Println(err)
 			return
 		}
 
-		ss.TstTrlLog.SaveCSV(gi.FileName(filepath.FromSlash(dirpathacts+fmt.Sprint(ss.RndSeed)+"_"+"run"+fmt.Sprint(ss.TrainEnv.Run.Cur)+"epoch"+fmt.Sprint(ss.TrainEnv.Epoch.Cur)+
+		ss.TstTrlLog.SaveCSV(gi.FileName(filepath.FromSlash("output/"+"wake"+"/"+fmt.Sprint(ss.DirSeed)+"/"+"tstsse"+fmt.Sprint(ss.RndSeed)+
+			"_truns_"+fmt.Sprint(ss.MaxRuns)+"_run_"+fmt.Sprint(ss.TrainEnv.Run.Cur)+"/"+
+			fmt.Sprint(ss.RndSeed)+"_"+"run"+fmt.Sprint(ss.TrainEnv.Run.Cur)+"epoch"+fmt.Sprint(ss.TrainEnv.Epoch.Cur)+
 			"_"+"poststage-"+fmt.Sprint(ss.SleepStage)+"slpblk_"+fmt.Sprint(ss.SleepCounter)+".csv")), etable.Comma, true)
 	}
 
