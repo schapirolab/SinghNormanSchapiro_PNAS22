@@ -1,6 +1,6 @@
 FROM golang:1.13
 
-WORKDIR /sim1
+WORKDIR /simulation_1
 
 COPY go.mod .
 COPY go.sum .
