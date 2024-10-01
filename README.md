@@ -4,12 +4,23 @@ Models corresponding to Singh, Norman &amp; Schapiro (2022). Article and additio
 
 These models have been developed in [Emergent](www.github.com/emer/emergent). The simulation files are set up to execute protocols described in the article and they will automatically default to their sequences.
 
-## How to run
+## How to run simulations directly
+Note: This is recommended if you have any computer which is not running apple silicon.
 1. Install Go. Any version starting 1.13 should work. See instructions on how to do this [here](https://go.dev/dl/).
 2. Clone this repository to your computer. See instructons on how to do this [here](https://docs.github.com/en/free-pro-team@latest/github/creating-cloning-and-archiving-repositories/cloning-a-repository).  
 3. ```cd``` into the repository and into a simulation folder and run the command ```go build  && <simulation name>``` (either 'simulation_1' or 'simulation_2'). 
 When you first run this command, Go should automatically download all dependencies required to run the simulation onto your computer. 
 Once the command runs through, a GUI window should open up where you can interact with the model.
+
+## How to run dockerized versions of the simulations
+Note: This is recommended only if you are running on the newer mac systems with apple silicon. Only the CLI version of emergent is supported on the dockerized simulations.
+1. Follow steps 1 & 2 from above.
+2. Install docker desktop. See instructions on how to do this [here](https://www.docker.com/get-started/).
+3. ```cd``` into the dockerized_simulations directory within the cloned repository and then into one of the simulation directories - either 'simulation_1' or 'simulation_2'.
+4. Build the docker image by running the command ```docker build -t <simulation_name> .``` (either 'simulation_1' or 'simulation_2'). This downloads all the required dependencies and builds an image on your computer for the selected simualation.
+5. Run the docker image by running the command ```docker run -v "$pwd/output:/<simulation_name>/output/" <simulation_name> true```. This will run the model (non-GUI) and default to the standard simulation protocol (like clicking on "Train" in GUI; see below).
+The model will ouptut to the output/ directory within the cloned repository directory. All output flags are turned on in the dockerized simulation (see "Model outputs").
+6. The model can be edited as needed within the cloned directory, but 4 & 5 need to be rerun to rebuild the image and run it.
 
 ## Protocols for simulations
 
