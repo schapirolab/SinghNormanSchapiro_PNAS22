@@ -1,0 +1,29 @@
+FROM golang:1.13
+
+WORKDIR /sim2
+
+COPY go.mod .
+COPY go.sum .
+COPY simulation_2.go .
+COPY params.go .
+COPY env1_pats_nohead.tsv .
+COPY env1_pats.txt .
+COPY env2_pats_nohead.tsv .
+COPY env2_pats.txt .
+
+RUN apt-get update && apt-get install -y \
+    x11-apps \
+    libgl1-mesa-dev \
+    libxcursor-dev \
+    libxrandr-dev \
+    libxinerama-dev \
+    libxi-dev \
+    libglu1-mesa-dev \
+    libgles2-mesa-dev \
+    xorg-dev \
+    && apt-get clean
+
+RUN go mod download
+RUN go build -o bin .
+
+ENTRYPOINT [ "./bin" ]
