@@ -237,9 +237,9 @@ func (ss *Sim) New() {
 	ss.SlpTrls = 0
 	ss.FinalTest = false
 	ss.SlpTrlOcc = false
-	ss.SlpWrtOut = true    // true to output sleep cyc acts
-	ss.TstWrtOut = true    // true to output tst trl acts
-	ss.SlpTstWrtOut = true // true to output extra test epoch results from both sides of sleep
+	ss.SlpWrtOut = false    // true to output sleep cyc acts
+	ss.TstWrtOut = false    // true to output tst trl acts
+	ss.SlpTstWrtOut = false // true to output extra test epoch results from both sides of sleep
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -658,7 +658,7 @@ func (ss *Sim) AlphaCyc(train bool) {
 	}
 
 	if !train && ss.TstWrtOut {
-		dirpathacts := "output/" + "tst_acts/" + fmt.Sprint(ss.DirSeed) + "/" + fmt.Sprint(ss.DirSeed) + "_truns_" +
+		dirpathacts := "output/" + "tst_acts/" + fmt.Sprint(ss.DirSeed) + "_truns_" +
 			fmt.Sprint(ss.MaxRuns) + "_run_" + fmt.Sprint(ss.TrainEnv.Run.Cur)
 
 		if _, err := os.Stat(filepath.FromSlash(dirpathacts)); os.IsNotExist(err) {
@@ -912,6 +912,12 @@ func (ss *Sim) TrainTrial() {
 					fileslpres.Close()
 					ss.FinalTest = false
 					//fmt.Println(ss.EpcShPctCor, ss.EpcUnPctCor, ss.EpcShSSE, ss.EpcUnSSE)
+
+				} else if ss.ExecSleep {
+					ss.SleepTrial()
+					ss.FinalTest = true
+					ss.TestAll(true)
+					ss.FinalTest = false
 				}
 
 				ss.RunEnd()
@@ -2961,7 +2967,8 @@ var SimProps = ki.Props{
 }
 
 func (ss *Sim) CmdArgs() {
-	ss.NoGui = true //true
+	ss.NoGui = true
+	ss.NoGui = true
 	var nogui bool
 	var saveEpcLog bool
 	var saveRunLog bool

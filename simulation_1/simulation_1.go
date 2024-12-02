@@ -11,7 +11,6 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
-	"github.com/goki/ki/bitflag"
 	"io/ioutil"
 	"log"
 	"math"
@@ -20,6 +19,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
+
+	"github.com/goki/ki/bitflag"
 
 	"github.com/schapirolab/leabra-sleep/hip"
 	"github.com/schapirolab/leabra-sleep/leabra"
@@ -911,6 +912,12 @@ func (ss *Sim) TrainTrial() {
 					fileslpres.Close()
 					ss.FinalTest = false
 					//fmt.Println(ss.EpcShPctCor, ss.EpcUnPctCor, ss.EpcShSSE, ss.EpcUnSSE)
+
+				} else if ss.ExecSleep {
+					ss.SleepTrial()
+					ss.FinalTest = true
+					ss.TestAll(true)
+					ss.FinalTest = false
 				}
 
 				ss.RunEnd()
@@ -2217,7 +2224,7 @@ func (ss *Sim) LogSlpCyc(dt *etable.Table, cyc int) {
 	}
 }
 
-//DZ added
+// DZ added
 func (ss *Sim) ConfigSlpCycLog(dt *etable.Table) {
 	dt.SetMetaData("name", "SlpCycLog")
 	dt.SetMetaData("desc", "Record of activity etc over one sleep trial by cycle")
@@ -2239,7 +2246,7 @@ func (ss *Sim) ConfigSlpCycLog(dt *etable.Table) {
 	dt.SetFromSchema(sch, np)
 }
 
-//DZ added
+// DZ added
 func (ss *Sim) ConfigSlpCycPlot(plt *eplot.Plot2D, dt *etable.Table) *eplot.Plot2D {
 	plt.Params.Title = "Leabra Random Associator 25 Sleep Cycle Plot"
 	plt.Params.XAxisCol = "Cycle"
